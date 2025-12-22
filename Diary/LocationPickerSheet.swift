@@ -106,13 +106,10 @@ struct BottomSheetLocationPicker: View {
     }
     
     private var mapView: some View {
-        Map(coordinateRegion: $region, interactionModes: .all, showsUserLocation: true, annotationItems: []) { item in
-            // no annotations by default
-            MapMarker(coordinate: item.coordinate)
-        }
-        .frame(minHeight: 300)
-        .cornerRadius(16)
-        .padding()
+        Map(coordinateRegion: $region, interactionModes: .all, showsUserLocation: true)
+            .frame(minHeight: 300)
+            .cornerRadius(16)
+            .padding()
     }
     
     private func performSearch(query: String) {

@@ -3,8 +3,10 @@ import SwiftUI
 struct BottomBar: View {
     @Namespace private var highlightNamespace
     @Binding var menuID: Int
-    private let icons = ["house", "book.pages.fill", "person.fill", "clipboard.fill"]
-    
+
+    // Only two icons now
+    private let icons = ["person.fill", "clipboard.fill"]
+
     var body: some View {
         HStack(spacing: 0) {
             ForEach(icons.indices, id: \.self) { idx in
@@ -21,7 +23,10 @@ struct BottomBar: View {
                                     RoundedRectangle(cornerRadius: 14, style: .continuous)
                                         .stroke(.white.opacity(0.35), lineWidth: 1)
                                 )
-                                .matchedGeometryEffect(id: "activeHighlight", in: highlightNamespace)
+                                .matchedGeometryEffect(
+                                    id: "activeHighlight",
+                                    in: highlightNamespace
+                                )
                                 .padding(.horizontal, 8)
                                 .frame(height: 44)
                         }
@@ -29,7 +34,9 @@ struct BottomBar: View {
                         Image(systemName: icons[idx])
                             .font(.system(size: 20, weight: .semibold))
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .foregroundStyle(idx == menuID ? Color.primary : Color.secondary)
+                            .foregroundStyle(
+                                idx == menuID ? Color.primary : Color.secondary
+                            )
                             .contentShape(Rectangle())
                     }
                     .frame(height: 56)
@@ -57,14 +64,20 @@ struct BottomBar: View {
 
     private func labelForIndex(_ idx: Int) -> Text {
         switch idx {
-        case 0: return Text("Home")
-        case 1: return Text("Customers")
-        case 2: return Text("Employees")
-        case 3: return Text("Invoices")
+        case 0: return Text("Profile")
+        case 1: return Text("Clipboard")
         default: return Text("Tab")
         }
     }
 }
+
+#Preview {
+    VStack {
+        Spacer()
+        BottomBar(menuID: .constant(0))
+    }
+}
+
 
 #Preview {
     VStack {

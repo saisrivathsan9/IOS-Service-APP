@@ -5,10 +5,17 @@ struct PickedLocation: Identifiable, Equatable {
     let id = UUID()
     var name: String
     var coordinate: CLLocationCoordinate2D
+
+    static func == (lhs: PickedLocation, rhs: PickedLocation) -> Bool {
+        lhs.id == rhs.id && lhs.name == rhs.name &&
+        lhs.coordinate.latitude == rhs.coordinate.latitude &&
+        lhs.coordinate.longitude == rhs.coordinate.longitude
+    }
 }
 
 struct LocationPickerSheet: View {
-    @Environment(\._dismiss) private var dismiss
+    // <-- FIX: use the correct environment key path
+    @Environment(\.dismiss) private var dismiss
 
     @State private var query: String = ""
     @State private var results: [MKMapItem] = []
@@ -25,18 +32,18 @@ struct LocationPickerSheet: View {
                     TextField("Search for a place", text: $query)
                         .textFieldStyle(.roundedBorder)
                         .submitLabel(.search)
-                        .onSubmit { performSearch() }
+                        .onSubmit { Task { await performSearch() } } // call async from onSubmit
                     if isSearching { ProgressView().padding(.leading, 4) }
                 }
                 .padding(.horizontal)
                 
-                Map(position: $cameraPosition, selection: Binding(get: {
-                    selected?.placemark.coordinate
-                }, set: { _ in })) {
+                Map(position: $cameraPosition) {
                     if let selected {
                         let coord = selected.placemark.coordinate
                         Annotation(selected.name ?? "Selected", coordinate: coord) {
-                            Image(systemName: "mappin.circle.fill").symbolRenderingMode(.multicolor).font(.title2)
+                            Image(systemName: "mappin.circle.fill")
+                                .symbolRenderingMode(.multicolor)
+                                .font(.title2)
                         }
                     }
                 }
@@ -46,7 +53,7 @@ struct LocationPickerSheet: View {
                 }
                 .frame(height: 300)
 
-                List(results, id: \.self) { item in
+                List(Array(results.enumerated()), id: \.offset) { index, item in
                     Button {
                         withAnimation {
                             selected = item
@@ -114,3 +121,4 @@ struct LocationPickerSheet: View {
         print(picked)
     }
 }
+

@@ -6,7 +6,6 @@ struct RootView: View {
     var body: some View {
         ZStack {
             contentFor(menuID)
-                .ignoresSafeArea()
 
             VStack {
                 Spacer()
@@ -20,15 +19,16 @@ struct RootView: View {
     private func contentFor(_ id: Int) -> some View {
         switch id {
         case 0:
-            HomeView()
-        case 1:
             CustomerView()
+        case 1:
+            TicketView()
         default:
-            HomeView()
+            TicketView()
         }
     }
 }
 
 #Preview {
     RootView()
+        .modelContainer(for: Customer.self, inMemory: true)
 }
