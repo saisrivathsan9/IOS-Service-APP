@@ -65,7 +65,6 @@ struct CustomerView: View {
                                     }
                                 }
                                 .onDelete { offsets in
-                                    // delete inside section - need to compute global indices
                                     deleteInSection(offsets: offsets, sectionTitle: title)
                                 }
                             }
@@ -85,6 +84,8 @@ struct CustomerView: View {
                             }
                         }
                     }
+                    // Reserve right padding so rows don't get overlapped by the alphabet index
+                    .padding(.trailing, 44)
                     // Alphabet index overlay
                     .overlay(alphabetIndex(proxy: proxy), alignment: .trailing)
                 }
@@ -95,13 +96,15 @@ struct CustomerView: View {
             }
         } detail: {
             Text("Select a customer")
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.white)
         }
     }
 
     // Overlay: vertical alphabet index; tap to scroll
     @ViewBuilder
     private func alphabetIndex(proxy: ScrollViewProxy) -> some View {
-        VStack {
+        VStack(spacing: 2) {
             ForEach(sectionTitles, id: \.self) { letter in
                 Button(action: {
                     withAnimation {
@@ -110,16 +113,15 @@ struct CustomerView: View {
                 }) {
                     Text(letter)
                         .font(.caption2)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
+                        .frame(width: 28, height: 18)
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(.vertical, 8)
         .background(Color.clear)
-        .padding(.trailing, 6)
-        .frame(maxWidth: 32)
+        .padding(.trailing, 8)
+        .frame(width: 36)
     }
 
     private func deleteInSection(offsets: IndexSet, sectionTitle: String) {

@@ -14,6 +14,9 @@ struct CustomerDetailView: View {
     // ticket search text
     @State private var ticketSearch: String = ""
 
+    // reserve space for the app bottom bar so scrolling reaches the bottom
+    private let bottomBarHeight: CGFloat = 100
+
     var filteredTickets: [Ticket] {
         let all = item.tickets.sorted { $0.dateCreated > $1.dateCreated }
         if ticketSearch.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -118,8 +121,14 @@ struct CustomerDetailView: View {
                 TicketSectionView(title: "Pending", tickets: grouped[.pending] ?? [])
                 TicketSectionView(title: "Done", tickets: grouped[.done] ?? [])
 
+                // add some bottom padding so content isn't cramped before inset
             }
             .padding()
+            .padding(.bottom, 8) // small extra padding
+        }
+        .safeAreaInset(edge: .bottom) {
+            // Reserve space equal to bottom bar height so content can scroll above it
+            Color.clear.frame(height: bottomBarHeight)
         }
         .navigationTitle("Details")
         .toolbar {
@@ -147,23 +156,27 @@ struct TicketSectionView: View {
                     .font(.subheadline)
                     .bold()
                 ForEach(tickets) { ticket in
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack {
-                            Text(ticket.serviceName.isEmpty ? "No Service" : ticket.serviceName)
-                                .font(.headline)
-                            Spacer()
-                            Text(ticket.dateCreated, style: .date)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                    NavigationLink {
+                        TicketDetailView(ticket: ticket)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack {
+                                Text(ticket.serviceName.isEmpty ? "No Service" : ticket.serviceName)
+                                    .font(.headline)
+                                Spacer()
+                                Text(ticket.dateCreated, style: .date)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            if !ticket.locationName.isEmpty {
+                                Text(ticket.locationName)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                            Divider()
                         }
-                        if !ticket.locationName.isEmpty {
-                            Text(ticket.locationName)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                        Divider()
+                        .padding(.vertical, 6)
                     }
-                    .padding(.vertical, 6)
                 }
             }
             .padding(.vertical, 8)

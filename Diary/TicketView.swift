@@ -1,6 +1,5 @@
 // TicketView.swift
-// Updated ticket list + sections + tap-to-cycle-status + attachments & editing support
-// Background set to white to match CustomerView
+// Updated: tap opens details, long-press status dropdown, detail view status/edit support
 
 import SwiftUI
 import SwiftData
@@ -11,18 +10,15 @@ struct TicketView: View {
     @State private var showForm = false
     @State private var editingTicket: Ticket? = nil
 
-    // optional ticket search in master list (if you want)
+    // optional ticket search in master list
     @State private var searchText: String = ""
 
     var body: some View {
         NavigationSplitView {
-            // Put a ZStack so we can set a white background behind the List
             ZStack {
-                // white background fills the whole area
-                Color.white
-                    .ignoresSafeArea()
+                Color.white.ignoresSafeArea()
 
-                // Precompute filtered arrays to keep view builder simpler
+                // Precompute filtered arrays
                 let filtered = tickets.filter { ticket in
                     searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                     ? true
@@ -40,54 +36,56 @@ struct TicketView: View {
                                   tickets: inProgressTickets,
                                   onEdit: { t in editingTicket = t; showForm = true },
                                   onDelete: { offsets in deleteItems(at: offsets, in: inProgressTickets) },
-                                  onToggleStatus: toggleStatus(_:))
+                                  onChangeStatus: changeStatus(_:to:))
 
                     TicketSection(title: "Pending",
                                   tickets: pendingTickets,
                                   onEdit: { t in editingTicket = t; showForm = true },
                                   onDelete: { offsets in deleteItems(at: offsets, in: pendingTickets) },
-                                  onToggleStatus: toggleStatus(_:))
+                                  onChangeStatus: changeStatus(_:to:))
 
                     TicketSection(title: "Done",
                                   tickets: doneTickets,
                                   onEdit: { t in editingTicket = t; showForm = true },
                                   onDelete: { offsets in deleteItems(at: offsets, in: doneTickets) },
-                                  onToggleStatus: toggleStatus(_:))
+                                  onChangeStatus: changeStatus(_:to:))
                 }
-                .scrollContentBackground(.hidden) // hide default list background so our Color.white shows
+                .scrollContentBackground(.hidden)
                 .listStyle(.plain)
             }
             .navigationTitle("Tickets")
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search tickets")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
+                ToolbarItem(placement: .navigationBarTrailing) { EditButton() }
                 ToolbarItem(placement: .primaryAction) {
-                    Button { editingTicket = nil; showForm = true } label: {
+                    Button {
+                        editingTicket = nil
+                        showForm = true
+                    } label: {
                         Label("Add Ticket", systemImage: "plus")
                     }
                 }
             }
-            // Use explicit initializer labels for TicketFormView to avoid ambiguity
+            // Explicit initializer to avoid ambiguity
             .sheet(isPresented: $showForm) {
                 TicketFormView(ticket: editingTicket, onSave: { result in
                     switch result {
                     case .create(let customer, let serviceName, let location, let status, let attachments):
+                        // dateCreated set here automatically on creation
                         let new = Ticket(customer: customer,
                                          dateCreated: Date(),
                                          status: status,
                                          serviceName: serviceName,
                                          locationName: location)
-                        // attach attachments (they were already inserted into model context in the form)
                         new.attachments.append(contentsOf: attachments)
+                        if status == .done { new.dateClosed = Date() }
                         modelContext.insert(new)
                     case .update(let ticket, let customer, let serviceName, let location, let status, let attachments):
+                        // update fields in-place
                         ticket.customer = customer
                         ticket.serviceName = serviceName
                         ticket.locationName = location
                         ticket.status = status
-                        // replace attachments (we replace to match the form behavior)
                         ticket.attachments = attachments
                         if status == .done, ticket.dateClosed == nil {
                             ticket.dateClosed = Date()
@@ -101,7 +99,7 @@ struct TicketView: View {
         } detail: {
             Text("Select a ticket")
                 .foregroundStyle(.secondary)
-                .background(Color.white) // ensure detail area also uses white background
+                .background(Color.white)
         }
     }
 
@@ -114,18 +112,13 @@ struct TicketView: View {
         }
     }
 
-    // cycles ticket status and handles dateClosed update
-    private func toggleStatus(_ ticket: Ticket) {
+    /// Set ticket status and adjust dateClosed automatically
+    private func changeStatus(_ ticket: Ticket, to newStatus: TicketStatus) {
         withAnimation {
-            switch ticket.status {
-            case .pending:
-                ticket.status = .inProgress
-                ticket.dateClosed = nil
-            case .inProgress:
-                ticket.status = .done
+            ticket.status = newStatus
+            if newStatus == .done {
                 ticket.dateClosed = Date()
-            case .done:
-                ticket.status = .pending
+            } else {
                 ticket.dateClosed = nil
             }
         }
@@ -133,32 +126,40 @@ struct TicketView: View {
 }
 
 
-
-
-// TicketSection + TicketRow + TicketDetailView + helpers
-// Kept small and reused; TicketRow now supports tap-to-toggle via onTap closure and shows status color pill.
-
-import SwiftUI
-
+/// Section that renders tickets; the row includes a long-press menu to change status.
 private struct TicketSection: View {
     let title: String
     let tickets: [Ticket]
     let onEdit: (Ticket) -> Void
     let onDelete: (IndexSet) -> Void
-    let onToggleStatus: (Ticket) -> Void
+    let onChangeStatus: (Ticket, TicketStatus) -> Void
 
     var body: some View {
         Section(title) {
             ForEach(tickets) { ticket in
                 NavigationLink {
-                    TicketDetailView(ticket: ticket)
+                    // Opens detail view on tap
+                    TicketDetailView(ticket: ticket) { updatedTicket in
+                        // callback when detail edits saved — not necessary but provided if you want callback
+                        // no-op here; changes are already persisted in SwiftData modelContext
+                    }
                 } label: {
-                    TicketRow(ticket: ticket, onToggleStatus: {
-                        onToggleStatus(ticket)
+                    TicketRow(ticket: ticket, onLongPressChange: { status in
+                        onChangeStatus(ticket, status)
                     })
                 }
-                .contextMenu {
+                .contextMenu { // extra menu on row if system supports it
                     Button("Edit") { onEdit(ticket) }
+                    Divider()
+                    Button {
+                        onChangeStatus(ticket, .pending)
+                    } label: { Text("Set Pending") }
+                    Button {
+                        onChangeStatus(ticket, .inProgress)
+                    } label: { Text("Set In Progress") }
+                    Button {
+                        onChangeStatus(ticket, .done)
+                    } label: { Text("Set Done") }
                 }
             }
             .onDelete(perform: onDelete)
@@ -166,10 +167,10 @@ private struct TicketSection: View {
     }
 }
 
+/// Row view. Tap navigates (handled by outer NavigationLink). Long-press shows status menu (dropdown).
 private struct TicketRow: View {
-    @Environment(\.modelContext) private var modelContext
     let ticket: Ticket
-    let onToggleStatus: () -> Void
+    let onLongPressChange: (TicketStatus) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -178,7 +179,6 @@ private struct TicketRow: View {
                     .font(.headline)
                 Spacer()
                 HStack(spacing: 8) {
-                    // status color pill
                     Circle()
                         .frame(width: 10, height: 10)
                         .foregroundColor(statusColor(for: ticket.status))
@@ -198,13 +198,32 @@ private struct TicketRow: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Spacer()
+                if let closed = ticket.dateClosed {
+                    Text("Closed: \(closed, format: .dateTime.year().month().day())")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
-        .contentShape(Rectangle()) // make whole row tappable
-        .onTapGesture(count: 1) {
-            // Toggle status when user taps the row
-            onToggleStatus()
+        .padding(.vertical, 6)
+        // long-press presents a contextual menu using confirmationDialog (iOS-friendly)
+        .onLongPressGesture {
+            // show a simple action sheet style menu: we use UIContextMenu above for richer options,
+            // but here provide a simple long-press flow calling the handler to cycle to next status.
+            // To show a dropdown with explicit choices, we use the menu presented by contextMenu (above).
+            // As a fallback, we cycle status on long press:
+            cycleStatus()
         }
+    }
+
+    private func cycleStatus() {
+        let next: TicketStatus
+        switch ticket.status {
+        case .pending: next = .inProgress
+        case .inProgress: next = .done
+        case .done: next = .pending
+        }
+        onLongPressChange(next)
     }
 
     private func displayName(for status: TicketStatus) -> String {
@@ -224,10 +243,27 @@ private struct TicketRow: View {
     }
 }
 
+
+/// Ticket detail view: shows ticket details, allows status updates and editing.
 struct TicketDetailView: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+
     let ticket: Ticket
+    var onSaveCallback: ((Ticket) -> Void)? = nil
+
+    @State private var showEditSheet: Bool = false
+    @State private var statusSelection: TicketStatus
+
+    // attachment preview
     @State private var showAttachmentPreview: Attachment? = nil
+
+    init(ticket: Ticket, onSaveCallback: ((Ticket) -> Void)? = nil) {
+        self.ticket = ticket
+        self.onSaveCallback = onSaveCallback
+        // initialize state from model object
+        _statusSelection = State(initialValue: ticket.status)
+    }
 
     var body: some View {
         ScrollView {
@@ -239,14 +275,31 @@ struct TicketDetailView: View {
                     Text("Status:")
                         .font(.headline)
                     HStack(spacing: 6) {
-                        Circle()
-                            .frame(width: 12, height: 12)
-                            .foregroundColor(statusColor(for: ticket.status))
-                        Text(displayName(for: ticket.status))
+                        Circle().frame(width: 12, height: 12).foregroundColor(statusColor(for: statusSelection))
+                        Text(displayName(for: statusSelection))
                     }
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(.ultraThinMaterial, in: Capsule())
+                }
+
+                // Status editor
+                Picker("Status", selection: $statusSelection) {
+                    ForEach(TicketStatus.allCases, id: \.self) { s in
+                        Text(displayName(for: s)).tag(s)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: statusSelection) { new in
+                    // apply change to model and adjust dateClosed
+                    ticket.status = new
+                    if new == .done {
+                        ticket.dateClosed = ticket.dateClosed ?? Date()
+                    } else {
+                        ticket.dateClosed = nil
+                    }
+                    // allow caller to respond if needed
+                    onSaveCallback?(ticket)
                 }
 
                 HStack {
@@ -279,9 +332,7 @@ struct TicketDetailView: View {
 
                 if !ticket.attachments.isEmpty {
                     Divider()
-                    Text("Attachments")
-                        .font(.headline)
-
+                    Text("Attachments").font(.headline)
                     ForEach(ticket.attachments) { attachment in
                         Button {
                             showAttachmentPreview = attachment
@@ -307,9 +358,33 @@ struct TicketDetailView: View {
         }
         .navigationTitle("Ticket")
         .toolbar {
+            // Edit button to open TicketFormView populated with this ticket
             ToolbarItem(placement: .primaryAction) {
-                Button("Close") { dismiss() }
+                Button("Edit") { showEditSheet = true }
             }
+        }
+        .sheet(isPresented: $showEditSheet) {
+            // present TicketFormView for editing; explicit onSave updates the same ticket
+            TicketFormView(ticket: ticket, onSave: { result in
+                switch result {
+                case .create:
+                    // shouldn't happen: creating from edit sheet - ignore
+                    break
+                case .update(let updatedTicket, let customer, let serviceName, let location, let status, let attachments):
+                    // Patch the existing ticket (updatedTicket is same instance)
+                    updatedTicket.customer = customer
+                    updatedTicket.serviceName = serviceName
+                    updatedTicket.locationName = location
+                    updatedTicket.status = status
+                    updatedTicket.attachments = attachments
+                    if status == .done && updatedTicket.dateClosed == nil {
+                        updatedTicket.dateClosed = Date()
+                    } else if status != .done {
+                        updatedTicket.dateClosed = nil
+                    }
+                }
+                showEditSheet = false
+            })
         }
         .sheet(item: $showAttachmentPreview) { attachment in
             AttachmentPreviewView(attachment: attachment)
@@ -333,8 +408,8 @@ struct TicketDetailView: View {
     }
 }
 
-
 #Preview {
     TicketView()
         .modelContainer(for: [Customer.self, Ticket.self], inMemory: true)
 }
+
