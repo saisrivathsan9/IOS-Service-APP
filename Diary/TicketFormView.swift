@@ -70,7 +70,7 @@ struct TicketFormView: View {
                             }
                             Text("Add New Location").tag(addNewLocationID)
                         }
-                        .onChange(of: locationChoice) { newValue in
+                        .onChange(of: locationChoice, initial: false) { oldValue, newValue in
                             if newValue == addNewLocationID {
                                 // present location picker to create new location and attach to selected customer
                                 showLocationPicker = true
@@ -246,4 +246,3 @@ struct TicketFormView: View {
         }
     }
 }
-

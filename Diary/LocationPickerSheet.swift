@@ -12,6 +12,11 @@ struct BottomSheetLocationPicker: View {
     )
     @State private var isSearching = false
     
+    @State private var cameraPosition: MapCameraPosition = .region(MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 37.334900, longitude: -122.009020),
+        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+    ))
+    
     // Callback to return selected location
     var onSelectLocation: (MKMapItem) -> Void
     
@@ -41,7 +46,7 @@ struct BottomSheetLocationPicker: View {
         .background(.regularMaterial)
         .cornerRadius(16)
         .ignoresSafeArea(edges: .bottom)
-        .onChange(of: searchQuery) { newValue in
+        .onChange(of: searchQuery, initial: false) { oldValue, newValue in
             performSearch(query: newValue)
         }
     }
@@ -106,10 +111,16 @@ struct BottomSheetLocationPicker: View {
     }
     
     private var mapView: some View {
-        Map(coordinateRegion: $region, interactionModes: .all, showsUserLocation: true)
-            .frame(minHeight: 300)
-            .cornerRadius(16)
-            .padding()
+        Map(position: $cameraPosition, interactionModes: .all) {
+            UserAnnotation()
+        }
+        .onMapCameraChange { context in
+            // keep MKCoordinateRegion in sync for searches
+            region = context.region
+        }
+        .frame(minHeight: 300)
+        .cornerRadius(16)
+        .padding()
     }
     
     private func performSearch(query: String) {

@@ -290,10 +290,10 @@ struct TicketDetailView: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                .onChange(of: statusSelection) { new in
+                .onChange(of: statusSelection, initial: false) { oldValue, newValue in
                     // apply change to model and adjust dateClosed
-                    ticket.status = new
-                    if new == .done {
+                    ticket.status = newValue
+                    if newValue == .done {
                         ticket.dateClosed = ticket.dateClosed ?? Date()
                     } else {
                         ticket.dateClosed = nil
