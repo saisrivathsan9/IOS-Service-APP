@@ -24,9 +24,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		812A39282E53CC4E00C1F29D /* Diary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Diary.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		812A393A2E53CC4F00C1F29D /* DiaryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DiaryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		812A39442E53CC4F00C1F29D /* DiaryUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DiaryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		812A39282E53CC4E00C1F29D /* ServiceSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ServiceSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		812A393A2E53CC4F00C1F29D /* ServiceSyncTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ServiceSyncTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		812A39442E53CC4F00C1F29D /* ServiceSyncUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ServiceSyncUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -85,9 +85,9 @@
 		812A39292E53CC4E00C1F29D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				812A39282E53CC4E00C1F29D /* Diary.app */,
-				812A393A2E53CC4F00C1F29D /* DiaryTests.xctest */,
-				812A39442E53CC4F00C1F29D /* DiaryUITests.xctest */,
+				812A39282E53CC4E00C1F29D /* ServiceSync.app */,
+				812A393A2E53CC4F00C1F29D /* ServiceSyncTests.xctest */,
+				812A39442E53CC4F00C1F29D /* ServiceSyncUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		812A39272E53CC4E00C1F29D /* Diary */ = {
+		812A39272E53CC4E00C1F29D /* ServiceSync */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 812A394E2E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "Diary" */;
+			buildConfigurationList = 812A394E2E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "ServiceSync" */;
 			buildPhases = (
 				812A39242E53CC4E00C1F29D /* Sources */,
 				812A39252E53CC4E00C1F29D /* Frameworks */,
@@ -110,16 +110,16 @@
 			fileSystemSynchronizedGroups = (
 				812A392A2E53CC4E00C1F29D /* Diary */,
 			);
-			name = Diary;
+			name = ServiceSync;
 			packageProductDependencies = (
 			);
 			productName = Diary;
-			productReference = 812A39282E53CC4E00C1F29D /* Diary.app */;
+			productReference = 812A39282E53CC4E00C1F29D /* ServiceSync.app */;
 			productType = "com.apple.product-type.application";
 		};
-		812A39392E53CC4F00C1F29D /* DiaryTests */ = {
+		812A39392E53CC4F00C1F29D /* ServiceSyncTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 812A39512E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "DiaryTests" */;
+			buildConfigurationList = 812A39512E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "ServiceSyncTests" */;
 			buildPhases = (
 				812A39362E53CC4F00C1F29D /* Sources */,
 				812A39372E53CC4F00C1F29D /* Frameworks */,
@@ -133,16 +133,16 @@
 			fileSystemSynchronizedGroups = (
 				812A393D2E53CC4F00C1F29D /* DiaryTests */,
 			);
-			name = DiaryTests;
+			name = ServiceSyncTests;
 			packageProductDependencies = (
 			);
 			productName = DiaryTests;
-			productReference = 812A393A2E53CC4F00C1F29D /* DiaryTests.xctest */;
+			productReference = 812A393A2E53CC4F00C1F29D /* ServiceSyncTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		812A39432E53CC4F00C1F29D /* DiaryUITests */ = {
+		812A39432E53CC4F00C1F29D /* ServiceSyncUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 812A39542E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "DiaryUITests" */;
+			buildConfigurationList = 812A39542E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "ServiceSyncUITests" */;
 			buildPhases = (
 				812A39402E53CC4F00C1F29D /* Sources */,
 				812A39412E53CC4F00C1F29D /* Frameworks */,
@@ -156,11 +156,11 @@
 			fileSystemSynchronizedGroups = (
 				812A39472E53CC4F00C1F29D /* DiaryUITests */,
 			);
-			name = DiaryUITests;
+			name = ServiceSyncUITests;
 			packageProductDependencies = (
 			);
 			productName = DiaryUITests;
-			productReference = 812A39442E53CC4F00C1F29D /* DiaryUITests.xctest */;
+			productReference = 812A39442E53CC4F00C1F29D /* ServiceSyncUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 812A39232E53CC4E00C1F29D /* Build configuration list for PBXProject "Diary" */;
+			buildConfigurationList = 812A39232E53CC4E00C1F29D /* Build configuration list for PBXProject "ServiceSync" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				812A39272E53CC4E00C1F29D /* Diary */,
-				812A39392E53CC4F00C1F29D /* DiaryTests */,
-				812A39432E53CC4F00C1F29D /* DiaryUITests */,
+				812A39272E53CC4E00C1F29D /* ServiceSync */,
+				812A39392E53CC4F00C1F29D /* ServiceSyncTests */,
+				812A39432E53CC4F00C1F29D /* ServiceSyncUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		812A393C2E53CC4F00C1F29D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 812A39272E53CC4E00C1F29D /* Diary */;
+			target = 812A39272E53CC4E00C1F29D /* ServiceSync */;
 			targetProxy = 812A393B2E53CC4F00C1F29D /* PBXContainerItemProxy */;
 		};
 		812A39462E53CC4F00C1F29D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 812A39272E53CC4E00C1F29D /* Diary */;
+			target = 812A39272E53CC4E00C1F29D /* ServiceSync */;
 			targetProxy = 812A39452E53CC4F00C1F29D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -409,7 +409,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = personal.Diary;
+				PRODUCT_BUNDLE_IDENTIFIER = personal.ServiceSync;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -438,7 +438,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = personal.Diary;
+				PRODUCT_BUNDLE_IDENTIFIER = personal.ServiceSync;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -461,7 +461,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Diary.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Diary";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ServiceSync.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ServiceSync";
 			};
 			name = Debug;
 		};
@@ -480,7 +480,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Diary.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Diary";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ServiceSync.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ServiceSync";
 			};
 			name = Release;
 		};
@@ -521,7 +521,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		812A39232E53CC4E00C1F29D /* Build configuration list for PBXProject "Diary" */ = {
+		812A39232E53CC4E00C1F29D /* Build configuration list for PBXProject "ServiceSync" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				812A394C2E53CC4F00C1F29D /* Debug */,
@@ -530,7 +530,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		812A394E2E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "Diary" */ = {
+		812A394E2E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "ServiceSync" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				812A394F2E53CC4F00C1F29D /* Debug */,
@@ -539,7 +539,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		812A39512E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "DiaryTests" */ = {
+		812A39512E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "ServiceSyncTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				812A39522E53CC4F00C1F29D /* Debug */,
@@ -548,7 +548,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		812A39542E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "DiaryUITests" */ = {
+		812A39542E53CC4F00C1F29D /* Build configuration list for PBXNativeTarget "ServiceSyncUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				812A39552E53CC4F00C1F29D /* Debug */,
