@@ -238,6 +238,7 @@ struct CustomerFormView: View {
                     modelContext.insert(loc)
                     locations.append(loc)
                 }
+                .presentationDetents([.large])
             }
         }
     }
