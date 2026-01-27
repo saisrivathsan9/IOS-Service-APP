@@ -28,6 +28,7 @@ struct DiaryApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .preferredColorScheme(.light)
         }
         .modelContainer(sharedModelContainer)
     }
