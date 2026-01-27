@@ -24,6 +24,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		811D1CCD2F2867D000B18C78 /* ServiceSync-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "ServiceSync-Info.plist"; sourceTree = "<group>"; };
 		812A39282E53CC4E00C1F29D /* ServiceSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ServiceSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		812A393A2E53CC4F00C1F29D /* ServiceSyncTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ServiceSyncTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		812A39442E53CC4F00C1F29D /* ServiceSyncUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ServiceSyncUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,6 +76,7 @@
 		812A391F2E53CC4E00C1F29D = {
 			isa = PBXGroup;
 			children = (
+				811D1CCD2F2867D000B18C78 /* ServiceSync-Info.plist */,
 				812A392A2E53CC4E00C1F29D /* Diary */,
 				812A393D2E53CC4F00C1F29D /* DiaryTests */,
 				812A39472E53CC4F00C1F29D /* DiaryUITests */,
@@ -171,7 +173,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1620;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					812A39272E53CC4E00C1F29D = {
 						CreatedOnToolsVersion = 16.2;
@@ -327,6 +329,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -383,6 +386,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -399,6 +403,8 @@
 				DEVELOPMENT_TEAM = J6XY4HJFNM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ServiceSync-Info.plist";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location to pick a place on the map";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -428,6 +434,8 @@
 				DEVELOPMENT_TEAM = J6XY4HJFNM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ServiceSync-Info.plist";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location to pick a place on the map";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -14,6 +14,8 @@ struct CustomerFormView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
+    @StateObject private var locationFetcher = LocationFetcher()
+
     var item: Customer?   // nil = add, non-nil = edit
 
     @State private var custName = ""
@@ -240,6 +242,10 @@ struct CustomerFormView: View {
                 }
                 .presentationDetents([.large])
             }
+        }
+        .onAppear {
+            locationFetcher.requestLocation()
+            print("CustomerFormView appeared")
         }
     }
 }

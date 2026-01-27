@@ -1,5 +1,60 @@
 import SwiftUI
 import MapKit
+import CoreLocation
+
+class LocationFetcher: NSObject, ObservableObject, CLLocationManagerDelegate {
+    @Published var userLocation: CLLocation?
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
+    
+    private let locationManager = CLLocationManager()
+    
+    override init() {
+        super.init()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+    }
+    
+    func requestLocation() {
+        print("LocationFetcher: requestLocation called. Current authorization status: \(CLLocationManager.authorizationStatus().rawValue)")
+        errorMessage = nil
+        switch CLLocationManager.authorizationStatus() {
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+        case .restricted, .denied:
+            errorMessage = "Location access is denied. Please enable it in settings."
+        case .authorizedAlways, .authorizedWhenInUse:
+            isLoading = true
+            locationManager.requestLocation()
+        @unknown default:
+            errorMessage = "Unknown location authorization status."
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        print("LocationFetcher: didChangeAuthorization to \(status.rawValue)")
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
+            requestLocation()
+        } else if status == .denied || status == .restricted {
+            errorMessage = "Location access is denied. Please enable it in settings."
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        isLoading = false
+        if let location = locations.first {
+            print("LocationFetcher: didUpdateLocations: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+            userLocation = location
+            errorMessage = nil
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("LocationFetcher: didFailWithError: \(error.localizedDescription)")
+        isLoading = false
+        errorMessage = "Failed to get location: \(error.localizedDescription)"
+    }
+}
 
 struct BottomSheetLocationPicker: View {
     @Environment(\.dismiss) private var dismiss
@@ -17,6 +72,9 @@ struct BottomSheetLocationPicker: View {
         span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
     ))
     
+    @StateObject private var locationFetcher = LocationFetcher()
+    @State private var locationError: String?
+    
     // Callback to return selected location
     var onSelectLocation: (MKMapItem) -> Void
     
@@ -29,6 +87,29 @@ struct BottomSheetLocationPicker: View {
                 .padding(.horizontal)
                 .padding(.top, 8)
                 .padding(.bottom, 4)
+            
+            Button {
+                locationFetcher.requestLocation()
+            } label: {
+                if locationFetcher.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                } else {
+                    Text("Get My Location")
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .disabled(locationFetcher.isLoading)
+            .padding(.horizontal)
+            .padding(.bottom, 4)
+            
+            if let error = locationFetcher.errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+                    .font(.footnote)
+                    .padding(.horizontal)
+                    .padding(.bottom, 4)
+            }
             
             Divider()
             
@@ -46,8 +127,25 @@ struct BottomSheetLocationPicker: View {
         .background(.regularMaterial)
         .cornerRadius(16)
         .ignoresSafeArea(edges: .bottom)
+        .onAppear {
+            print("BottomSheetLocationPicker appeared")
+            locationFetcher.requestLocation()
+        }
         .onChange(of: searchQuery, initial: false) { oldValue, newValue in
             performSearch(query: newValue)
+        }
+        .onChange(of: locationFetcher.userLocation) { newLocation in
+            guard let location = newLocation else { return }
+            withAnimation {
+                let coordinate = location.coordinate
+                let newRegion = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+                region = newRegion
+                cameraPosition = .region(newRegion)
+            }
+            // Construct an MKMapItem and call onSelectLocation automatically
+            let placemark = MKPlacemark(coordinate: location.coordinate)
+            let mapItem = MKMapItem(placemark: placemark)
+            onSelectLocation(mapItem)
         }
     }
     
@@ -113,6 +211,9 @@ struct BottomSheetLocationPicker: View {
     private var mapView: some View {
         Map(position: $cameraPosition, interactionModes: .all) {
             UserAnnotation()
+        }
+        .mapControls {
+            MapUserLocationButton()
         }
         .onMapCameraChange { context in
             // keep MKCoordinateRegion in sync for searches
